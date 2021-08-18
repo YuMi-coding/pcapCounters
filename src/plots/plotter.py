@@ -8,8 +8,8 @@ from . import helpers
 class Plotter():
     def __init__(self, data, x_legend="", y_legend=""):
         self.data = data
-        self.x_legend = ""
-        self.y_legend = ""
+        self.x_legend = x_legend
+        self.y_legend = y_legend
 
     def saveFig(self, filename):
         plt.savefig(filename)
