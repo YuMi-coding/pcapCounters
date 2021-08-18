@@ -27,8 +27,11 @@ if __name__ == "__main__":
     m_ts, m_signal = malicious_reader.get_ts_signal()
     l_ts, l_signal = legitimate_reader.get_ts_signal()
 
+    # print(len(m_ts), len(m_signal))
+    # print(len(l_ts), len(l_signal))
+
     plotter = Plotter(data={
-        "legitimate": {
+        "total": {
             "x" : l_ts,
             "y" : l_signal,
         },
@@ -37,4 +40,4 @@ if __name__ == "__main__":
             "y" : m_signal,
         }
     })
-    plotter.linePlot().saveFig("./test.png")
+    plotter.linePlot(alignX=True).saveFig("./test.png")

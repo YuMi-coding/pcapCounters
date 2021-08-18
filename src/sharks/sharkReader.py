@@ -12,9 +12,9 @@ class SharkReader():
         self.capture = pyshark.FileCapture(self.pcap_file, display_filter=self.filter_str)
 
     def get_ts_signal(self):
-        ts = []
-        signal = [0]
         min_ts = float(self.capture[0].frame_info.time_epoch)
+        ts = [min_ts]
+        signal = [0]
 
         max_grain = 0
         for pkt in self.capture:
