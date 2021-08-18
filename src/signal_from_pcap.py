@@ -18,7 +18,7 @@ if __name__ == "__main__":
         print("No available specs!")
         exit(0)
     
-    shark_filters = SharkConfigFactory("tcp.analysis.retransmission").\
+    shark_filters = SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
         loadSpec(args.spec).getFilter()
 
     malicious_reader = SharkReader(args.input, shark_filters.malicious_filter)
@@ -31,13 +31,16 @@ if __name__ == "__main__":
     # print(len(l_ts), len(l_signal))
 
     plotter = Plotter(data={
-        "total": {
-            "x" : l_ts,
-            "y" : l_signal,
+            "total": {
+                "x" : l_ts,
+                "y" : l_signal,
+            },
+            "malicious":{
+                "x" : m_ts,
+                "y" : m_signal,
+            }
         },
-        "malicious":{
-            "x" : m_ts,
-            "y" : m_signal,
-        }
-    })
+        x_legend="Time(s)",
+        y_legend="Retransmission signals"
+    )
     plotter.linePlot(alignX=True).saveFig("./test.png")

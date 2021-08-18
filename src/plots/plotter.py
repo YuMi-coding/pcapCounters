@@ -6,13 +6,14 @@ import matplotlib.pyplot as plt
 from . import helpers
 
 class Plotter():
-    def __init__(self, data):
+    def __init__(self, data, x_legend="", y_legend=""):
         self.data = data
+        self.x_legend = ""
+        self.y_legend = ""
 
     def saveFig(self, filename):
         plt.savefig(filename)
         return self
-
 
     def linePlot(self, data=None, alignX=False):
         if data is not None:
@@ -26,5 +27,7 @@ class Plotter():
             plt.plot(series_data["x"], series_data["y"], label=series)
 
         plt.legend(loc="best")
+        plt.xlabel(self.x_legend)
+        plt.ylabel(self.y_legend)
 
         return self
