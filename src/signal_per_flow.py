@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# Reads from pcap files and calculates their signals
+# Reads from pcap files and calculates their signals, generates the signals and calculates per flow singals
+
 import argparse
 
 from .sharks.sharkReader import SharkReader
