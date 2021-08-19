@@ -3,6 +3,8 @@
 
 import argparse
 
+from .data.align import Align
+
 from .sharks.sharkReader import SharkReader
 from .sharks.sharkConfig import SharkConfigFactory
 from .plots.plotter import Plotter
@@ -20,30 +22,40 @@ if __name__ == "__main__":
     if [args.spec, args.malicious_hosts, args.legitimate_hosts] == [None, None, None]:
         print("No available specs!")
         exit(0)
-    
-    shark_filters = SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
+
+    signal_filters = SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
         loadSpec(args.spec).getFilter()
 
-    malicious_reader = SharkReader(args.input, shark_filters.malicious_filter)
-    legitimate_reader = SharkReader(args.input, shark_filters.legitimate_filter)
+    malicious_reader = SharkReader(args.input, signal_filters.malicious_filter)
+    legitimate_reader = SharkReader(args.input, signal_filters.legitimate_filter)
 
     m_ts, m_signal = malicious_reader.get_ts_signal()
     l_ts, l_signal = legitimate_reader.get_ts_signal()
 
+    flow_filters = SharkConfigFactory("(tcp)").loadSpec(args.spec).getFilter()
+
+    malicious_flow_reader = SharkReader(args.input, flow_filters.malicious_filter)
+    legitimate_flow_reader = SharkReader(args.input, flow_filters.legitimate_filter)
+
+    mf_ts, mf_flows = malicious_flow_reader.get_ts_flowcount()
+    lf_ts, lf_flows = legitimate_flow_reader.get_ts_flowcount()
     # print(len(m_ts), len(m_signal))
     # print(len(l_ts), len(l_signal))
 
+    l_aligned = Align(key=l_ts, value=l_signal).loadKeyValue(key=lf_ts, value=lf_flows).getDivided()
+    m_aligned = Align(key=m_ts, value=m_signal).loadKeyValue(key=mf_ts, value=mf_flows).getDivided()
+
     plotter = Plotter(data={
             "total": {
-                "x" : l_ts,
-                "y" : l_signal,
+                "x" : l_aligned.key,
+                "y" : l_aligned.value,
             },
             "malicious":{
-                "x" : m_ts,
-                "y" : m_signal,
+                "x" : m_aligned.key,
+                "y" : m_aligned.value,
             }
         },
         x_legend="Time(s)",
-        y_legend="Retransmission signals"
+        y_legend="Retransmission signals per Flow"
     )
     plotter.linePlot(alignX=True).saveFig("./test.png")

@@ -1,4 +1,6 @@
 import pyshark
+
+from .flow import Flow, key_v4
 from .sharkConfig import SharkConfigFactory
 
 class SharkReader():
@@ -30,3 +32,30 @@ class SharkReader():
                 signal[-1] += 1
 
         return ts, signal
+
+    def get_ts_flowcount(self):
+        min_ts = float(self.capture[0].frame_info.time_epoch)
+
+        ts = [min_ts]
+        flowcount = [0]
+        flow_sets = []
+
+        max_grain = 0
+        for pkt in self.capture:
+            real_ts = float(pkt.frame_info.time_epoch)
+            relative_ts = real_ts - min_ts
+
+            current_grain = int(relative_ts / self.time_grain)
+            if current_grain > max_grain:
+                max_grain = current_grain
+                ts.append(real_ts)
+
+                flowcount.append(1)
+                flow_sets = [key_v4(pkt=pkt)]
+            else:
+                this_key = key_v4(pkt=pkt)
+                if this_key not in flow_sets:
+                    flow_sets.append(this_key)
+                    flowcount[-1] += 1
+
+        return ts, flowcount

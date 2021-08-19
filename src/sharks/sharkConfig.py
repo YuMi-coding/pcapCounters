@@ -40,7 +40,6 @@ class SharkConfigFactory:
         legitimate_str = helpers.getFilterStr(self.legitimate_hosts)
         if len(legitimate_str) > 0:
             legitimate_filter += " && (" + legitimate_str + ")"
-        
 
         # Malicious
         malicious_str = helpers.getFilterStr(self.malicious_hosts)
