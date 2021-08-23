@@ -12,6 +12,7 @@ argparser.add_argument("-i", "--input", help="Input pcap file")
 argparser.add_argument("-s", "--spec", help="Specification for hosts, can include both types")
 argparser.add_argument("-m", "--malicious-hosts", help="Malicious hosts list")
 argparser.add_argument("-l", "--legitimate-hosts", help="Legitimat hosts list")
+argparser.add_argument("-o", "--output", help="The output image name.", default="./default_imagename.png")
 
 
 if __name__ == "__main__":
@@ -45,4 +46,4 @@ if __name__ == "__main__":
         x_legend="Time(s)",
         y_legend="Retransmission signals"
     )
-    plotter.linePlot(alignX=True).saveFig("./test.png")
+    plotter.linePlot(alignX=True).saveFig(args.output)
