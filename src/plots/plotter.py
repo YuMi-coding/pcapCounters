@@ -18,7 +18,7 @@ class Plotter():
     def linePlot(self, data=None, alignX=False):
         if data is not None:
             self.data = data
-        if alignX:
+        if alignX and len(self.data) > 0:
             self.data = helpers.alignX(self.data)
 
         plt.clf()

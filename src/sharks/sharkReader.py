@@ -14,7 +14,10 @@ class SharkReader():
         self.capture = pyshark.FileCapture(self.pcap_file, display_filter=self.filter_str)
 
     def get_ts_signal(self):
-        min_ts = float(self.capture[0].frame_info.time_epoch)
+        try:
+            min_ts = float(self.capture[0].frame_info.time_epoch)
+        except KeyError:
+            return [], []
         ts = [min_ts]
         signal = [0]
 
@@ -34,7 +37,10 @@ class SharkReader():
         return ts, signal
 
     def get_ts_flowcount(self):
-        min_ts = float(self.capture[0].frame_info.time_epoch)
+        try:
+            min_ts = float(self.capture[0].frame_info.time_epoch)
+        except KeyError:
+            return [], []
 
         ts = [min_ts]
         flowcount = [0]

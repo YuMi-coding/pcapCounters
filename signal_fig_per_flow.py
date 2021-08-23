@@ -9,6 +9,7 @@ from src.sharks.sharkReader import SharkReader
 from src.sharks.sharkConfig import SharkConfigFactory
 from src.plots.plotter import Plotter
 
+DEBUG = 1
 argparser = argparse.ArgumentParser(description="Detects the signal(rtm/ofo) from pcap files. \
     Preferablly loads the specs for legitimate/ malicious end hosts.")
 argparser.add_argument("-i", "--input", help="Input pcap file")
@@ -26,14 +27,19 @@ if __name__ == "__main__":
 
     signal_filters = SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
         loadSpec(args.spec).getFilter()
+    flow_filters = SharkConfigFactory("(tcp)").loadSpec(args.spec).getFilter()
+
+    if DEBUG:
+        print("signal filters for malicious:\n", signal_filters.malicious_filter)
+        print("signal filters for all:\n", signal_filters.legitimate_filter)
+        print("flow filters for malicious:\n", flow_filters.malicious_filter)
+        print("flow filters for all:\n", flow_filters.legitimate_filter)
 
     malicious_reader = SharkReader(args.input, signal_filters.malicious_filter)
     legitimate_reader = SharkReader(args.input, signal_filters.legitimate_filter)
 
     m_ts, m_signal = malicious_reader.get_ts_signal()
     l_ts, l_signal = legitimate_reader.get_ts_signal()
-
-    flow_filters = SharkConfigFactory("(tcp)").loadSpec(args.spec).getFilter()
 
     malicious_flow_reader = SharkReader(args.input, flow_filters.malicious_filter)
     legitimate_flow_reader = SharkReader(args.input, flow_filters.legitimate_filter)

@@ -3,8 +3,8 @@ import argparse
 from src.parser import labelParser, labelTypes
 
 parser = argparse.ArgumentParser(description="Parse the labeling of datasets into spec json files")
-parser.add_argument("-i", "--input", help="Input the labeling file")
-parser.add_argument("-o", "--output", help="Output of spec jsons")
+parser.add_argument("-i", "--input", help="Input the labeling file", default="../DDoS-eval/BOT_IOT/DDoS_HTTP.csv")
+parser.add_argument("-o", "--output", help="Output of spec jsons", default="../DDoS-eval/BOT_IOT/DDoS_HTTP.json")
 
 if __name__ == "__main__":
     args = parser.parse_args()

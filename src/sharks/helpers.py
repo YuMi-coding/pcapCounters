@@ -31,7 +31,7 @@ def loadAddresses(config):
         values = config.values()
         values = list(values)
         res = list()
-        for v in values:
+        for v in config.keys():
             if isinstance(v, list):
                 for vv in v:
                     append_an_address(res, vv)

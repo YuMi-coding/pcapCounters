@@ -1,4 +1,5 @@
 # Align data according to keys
+
 from . import helpers
 from typing import Iterable
 
@@ -12,6 +13,10 @@ class Align():
 
     def loadKeyValue(self, key, value):
         assert len(key) == len(value), "The length of key and value must be the same."
+        if len(key) == 0:
+            for i,v in enumerate(self.value):
+                self.value[i] = list(v.append(0)) if isinstance(i, Iterable) else [v].append(0)
+            return self
 
         key = helpers.preprocess_keys(key) # Align the keys to the floored grain
 
@@ -55,7 +60,8 @@ class Align():
         return self
 
     def getDivided(self):
-
+        if len(self.value) <= 0:
+            return Align(key=[], value=[])
         assert isinstance(self.value[0],Iterable) and len(self.value[0]) == 2, "Value error, not dividable"
 
         divided_keys = []
