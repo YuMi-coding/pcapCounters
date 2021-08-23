@@ -32,7 +32,9 @@ class Align():
         while pointer_1 < len(self.key) and pointer_2 < len(s_key):
             if self.key[pointer_1] < s_key[pointer_2]:
                 new_key.append(self.key[pointer_1])
-                new_values.append(tuple(self.value[pointer_1], 0))
+                temp_list = self.value[pointer_1]
+                temp_list.append(0)
+                new_values.append(tuple(temp_list))
                 pointer_1 += 1
             elif self.key[pointer_1] == s_key[pointer_2]:
                 new_key.append(self.key[pointer_1])
