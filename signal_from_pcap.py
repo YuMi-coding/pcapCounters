@@ -2,9 +2,9 @@
 # Reads from pcap files and calculates their signals
 import argparse
 
-from .sharks.sharkReader import SharkReader
-from .sharks.sharkConfig import SharkConfigFactory
-from .plots.plotter import Plotter
+from src.sharks.sharkReader import SharkReader
+from src.sharks.sharkConfig import SharkConfigFactory
+from src.plots.plotter import Plotter
 
 argparser = argparse.ArgumentParser(description="Detects the signal(rtm/ofo) from pcap files. \
     Preferablly loads the specs for legitimate/ malicious end hosts.")
