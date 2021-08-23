@@ -13,6 +13,7 @@ class LabelParser():
         parserFunction(labelfile, outputfile)
 
     def parseBOTIOTDDOSHTTP(self, labelfile, outputfile):
+        malicious_hosts = set()
         with open(labelfile, "r") as csvfile:
             csvreader = csv.reader(csvfile, delimiter=';')
             keys = []
@@ -25,17 +26,18 @@ class LabelParser():
                     record_dict = {}
                     for i,item in enumerate(row):
                         record_dict[keys[i]] = item
-                    records.append(record_dict)
 
-        malicious_hosts = set()
-        for rr in records:
-            if rr['attack'] == 'DDoS':
-                if rr['dir'] == '->':
-                    attacking_source = rr['saddr']
-                else:
-                    attacking_source = rr['daddr']
-            malicious_hosts.add(attacking_source)
+                    if record_dict['attack']:
+                        if record_dict['category'] == 'DDoS':
+                            if record_dict['dir'] == '->':
+                                attacking_source = record_dict['saddr']
+                            else:
+                                attacking_source = record_dict['daddr']
+                            malicious_hosts.add(attacking_source)
+                        else:
+                            # print(rr['category'])
+                            pass
 
-        json_data = {"malicious": list(malicious_hosts)}
+        json_data = {"malicious": sorted(list(malicious_hosts))}
         with open(outputfile, "w") as outfile:
-            json.dump(json_data, outfile)
+            json.dump(json_data, outfile, indent=4)
