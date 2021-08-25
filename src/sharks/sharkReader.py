@@ -36,6 +36,38 @@ class SharkReader():
 
         return ts, signal
 
+    def get_flow_rate(self):
+        try:
+            min_ts = float(self.capture[0].frame_info.time_epoch)
+        except KeyError:
+            return [], [], []
+
+        ts = [min_ts]
+        pkt_count = [0]
+        byte_count = [0]
+        max_grain = 0
+        for pkt in self.capture:
+            real_ts = float(pkt.frame_info.time_epoch)
+            
+            relative_ts = real_ts - min_ts
+            pkt_size = int(pkt.length)
+            current_grain = int(relative_ts / self.time_grain)
+            if current_grain > max_grain:
+                max_grain = current_grain
+                ts.append(real_ts)
+
+                pkt_count.append(1)
+                byte_count.append(pkt_size)
+            else:
+                pkt_count[-1] += 1
+                byte_count[-1] += pkt_size
+            # print(ts)
+            # print(pkt_count)
+            # print(byte_count)
+
+
+        return ts, pkt_count, byte_count
+
     def get_ts_flowcount(self):
         try:
             min_ts = float(self.capture[0].frame_info.time_epoch)
