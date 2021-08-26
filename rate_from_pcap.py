@@ -32,7 +32,10 @@ if __name__ == "__main__":
 
     # print(len(m_ts), len(m_signal))
     # print(len(l_ts), len(l_signal))
-    print(l_ts, l_pps)
+    # print(l_ts, l_pps)
+    print("Total malicious packets: ", sum(m_pps), ", total legitimate packets:", sum(l_pps))
+    print("Total malicious bytes: ", sum(m_bps), ", total legitimate byptes:", sum(l_bps))
+
 
     plotter = Plotter(data={
             "total_pps": {
