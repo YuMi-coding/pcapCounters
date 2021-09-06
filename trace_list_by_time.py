@@ -12,8 +12,10 @@ parser = argparse.ArgumentParser(description="Read a time specify file, check a 
 parser.add_argument('-t', '--input-timefile', help='The input time specification', metavar="PATH", default="./timespec_01_12.json")
 parser.add_argument('-f', '--input-folder', help='The input pcap file folder', metavar="PATH", default="../DDoS-eval/CICDDoS2019/")
 parser.add_argument('-o', '--output-file', help='The output file list', default='./timespec.json')
+parser.add_argument('-s', '--time-offset', help='The time difference introduced by time zone.', default='0')
 
 pcap_info_queue = Queue()
+time_offset = 0
 
 def get_pcap_lists(input_folder):
     from os import listdir
@@ -29,7 +31,7 @@ def read_a_pcap(pcap_filename):
     for ts, buf in pcap:
         start_time = min(ts, start_time)
         end_time = max(end_time, ts)
-    pcap_info_queue.put((pcap_filename, {"start": start_time, "end": end_time}))
+    pcap_info_queue.put((pcap_filename, {"start": start_time + time_offset, "end": end_time + time_offset}))
     print("Finished reading:", pcap_filename, "\t, total read:", pcap_info_queue.qsize())
 
 def read_pcaps(pcap_list):
@@ -99,6 +101,7 @@ def parse_time_spec(timespec_filename):
 
 if __name__ == '__main__':
     args = parser.parse_args()
+    time_offset = int(args.time_offset)
     time_specs = parse_time_spec(args.input_timefile)
     pcap_times = read_pcaps(get_pcap_lists(args.input_folder))
     kinds = sort_kinds_dict(matching_timeslots(time_specs, pcap_times))
