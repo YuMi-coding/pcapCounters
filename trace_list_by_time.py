@@ -9,7 +9,7 @@ from multiprocessing import Pool, Queue, cpu_count
 TIME_SPEC_FORMAT ='%b %d %Y %I:%M%p'
 parser = argparse.ArgumentParser(description="Read a time specify file, check a series of pcap files,\
     and output their which pcap file belongs to which file.")
-parser.add_argument('-t', '--input-timefile', help='The input time specification', metavar="PATH", default="./timespec_01_12.json")
+parser.add_argument('-t', '--input-timefile', help='The input time specification', metavar="PATH", default="./timespec_03_11.json")
 parser.add_argument('-f', '--input-folder', help='The input pcap file folder', metavar="PATH", default="../DDoS-eval/CICDDoS2019/")
 parser.add_argument('-o', '--output-file', help='The output file list', default='./timespec.json')
 parser.add_argument('-s', '--time-offset', help='The time difference introduced by time zone.', default='0')
@@ -65,6 +65,9 @@ def matching_timeslots(times, pcaps):
                 insert_to_dict(kinds_dict, kind, pcap)
                 continue
             if pcap_start > kind_start and pcap_start < kind_end:
+                insert_to_dict(kinds_dict, kind, pcap)
+                continue
+            if pcap_start < kind_start and pcap_end > kind_end:
                 insert_to_dict(kinds_dict, kind, pcap)
                 continue
     return kinds_dict
