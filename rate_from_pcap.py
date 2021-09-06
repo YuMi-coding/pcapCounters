@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # Reads from pcap files and calculates their signals
 import argparse
-from re import X
 
 from src.sharks.sharkReader import SharkReader
 from src.sharks.sharkConfig import SharkConfigFactory
@@ -35,7 +34,6 @@ if __name__ == "__main__":
     # print(l_ts, l_pps)
     print("Total malicious packets: ", sum(m_pps), ", total legitimate packets:", sum(l_pps))
     print("Total malicious bytes: ", sum(m_bps), ", total legitimate byptes:", sum(l_bps))
-
 
     plotter = Plotter(data={
             "total_pps": {
