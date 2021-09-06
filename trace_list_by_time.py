@@ -30,6 +30,7 @@ def read_a_pcap(pcap_filename):
         start_time = min(ts, start_time)
         end_time = max(end_time, ts)
     pcap_info_queue.put((pcap_filename, {"start": start_time, "end": end_time}))
+    print("Finished reading:", pcap_filename, "\t, total read:", pcap_info_queue.qsize())
 
 def read_pcaps(pcap_list):
     pcap_info = {}
