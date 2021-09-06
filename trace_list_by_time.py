@@ -37,7 +37,7 @@ def read_pcaps(pcap_list):
     with Pool(cpu_count() - 2) as pool:
         pool.map(read_a_pcap, pcap_list)
 
-    while pcap_info_queue.qsize():
+    while not pcap_info_queue.empty():
         k, v = pcap_info_queue.get()
         pcap_info[k] = v
 
