@@ -42,4 +42,5 @@ if __name__ == "__main__":
     time_specs = parse_time_spec(args.input_timefile)
     kind_files = parse_kind_spec(args.kind_file)
     specs = group_specs(time_specs, kind_files)
-    print(specs)
+    
+    process_specs(specs, args.output_file)
