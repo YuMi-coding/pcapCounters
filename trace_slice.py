@@ -29,7 +29,7 @@ def process_a_spec(arguments):
 def process_specs(spec_list, dest_folder):
     mp_args = []
     for spec in spec_list:
-        time_iterator = PcapTimeIterator(spce = spec)
+        time_iterator = PcapTimeIterator(spec = spec)
         filename = dest_folder + '/' + time_iterator.spec.name + ".pcap"
         mp_args.append((filename, time_iterator))
 
