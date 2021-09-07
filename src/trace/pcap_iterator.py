@@ -1,10 +1,17 @@
 # This class is a pcap iterator that reads a series of packets
+from .pcap_specs import PcapSpec
 from .helpers import pcapReader, satisfy_timespec
 
 class PcapTimeIterator():
-    def __init__(self, files=[], timespec=None):
-        self.files = files
-        self.timespec = timespec
+    def __init__(self, spec:PcapSpec = None, files=[], timespec=None):
+        if spec is not None:
+            self.spec = spec
+            self.files = spec.files
+            self.timespec = spec.timespec
+        else:
+            self.spec = None
+            self.files = files
+            self.timespec = timespec
 
         self.current_file = 0 # index of iterated file
         self.file_contents = None

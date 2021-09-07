@@ -3,9 +3,11 @@
 
 import argparse
 from multiprocessing import Pool, Queue, cpu_count
+from os import write
 
+from src.trace.pcap_iterator import PcapTimeIterator
 from src.trace.pcap_specs import group_specs
-from src.trace.helpers import parse_time_spec, parse_kind_spec
+from src.trace.helpers import parse_time_spec, parse_kind_spec, write_pcap_file
 
 
 parser = argparse.ArgumentParser(description="Generate the pcap files according to time\
@@ -18,10 +20,21 @@ parser.add_argument('-o', '--output-file', help='The output file folder',
     metavar="PATH", default='./')
 parser.add_argument('-k', '--kind-file', help='The kind-file list',
     metavar="PATH", default='./01_12.json')
-parser.add_argument('-s', '--time-offset', help='The time difference introduced by time zone.',
-    default='0')
 
+def process_a_spec(arguments):
+    dest_filename, iterator = arguments
+    write_pcap_file(dest_filename, iterator)
+    print("Finished writing pcap file:", dest_filename)
 
+def process_specs(spec_list, dest_folder):
+    mp_args = []
+    for spec in spec_list:
+        time_iterator = PcapTimeIterator(spce = spec)
+        filename = dest_folder + '/' + time_iterator.spec.name + ".pcap"
+        mp_args.append((filename, time_iterator))
+
+    with Pool(cpu_count() - 2) as pool:
+        pool.map(process_a_spec, mp_args)
 
 
 if __name__ == "__main__":

@@ -46,3 +46,16 @@ def get_pcap_lists(input_folder):
     from os.path import isfile, join
     pcap_list = [join(input_folder, f) for f in listdir(input_folder) if isfile(join(input_folder, f))]
     return pcap_list
+
+def write_pcap_file(dest_filename, pkts):
+    writer_fd = open(dest_filename, "wb")
+    writer = dpkt.pcap.Writer(writer_fd)
+
+    written_count = 0
+    for ts, buf in pkts:
+        writer.writepkt(buf, ts)
+        written_count += 1
+        if written_count % 10000 == 0:
+            written_count = 0
+            writer_fd.flush()
+    writer_fd.close()
