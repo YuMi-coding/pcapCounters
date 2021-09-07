@@ -61,6 +61,8 @@ class PcapTimeIterator():
                 self.current_file = i
                 break
 
+        print(self.spec.name, found_pkt)
+
         # 4: Check if we find the pkt, and return
         if not found_pkt:
             raise StopIteration
