@@ -56,7 +56,7 @@ class PcapTimeIterator():
         # 3: Find the next packet which satisfies the timespec from file list
         found_pkt = False
         for i in range(self.current_file+1, len(self.files)):
-            pcap = pcapReader(self.files[self.current_file])
+            pcap = pcapReader(self.files[i])
             found_pkt = self.__load_pkts(pcap)
             if found_pkt:
                 self.current_file = i
