@@ -21,6 +21,7 @@ class PcapTimeIterator():
         self.file_contents = []
         pkt_index = 0
         found_pkt = False
+        self.file_itered = -1
         for ts, buf in pcap:
             self.file_contents.append((ts, buf))
             if self.file_itered < 0:
