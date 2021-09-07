@@ -44,8 +44,9 @@ class PcapTimeIterator():
         # 1: current file has remaining packet, consume this file
         if self.file_itered < len(self.file_contents):
             ret_ts, ret_buf = self.file_contents[self.file_itered]
-            self.file_itered += 1
-            return ret_ts, ret_buf
+            if satisfy_timespec(ret_ts, self.timespec):
+                self.file_itered += 1
+                return ret_ts, ret_buf
 
         # 2: We don't have enough files, stop
         if self.current_file >= len(self.files):
