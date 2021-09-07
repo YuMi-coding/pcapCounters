@@ -7,7 +7,7 @@ class PcapSpec():
         self.name = name
         self.files = files
         self.timespec = timespec
-    
+
     def __str__(self) -> str:
         h_equal = "="*26
         out_str = h_equal + self.name + h_equal + '\n'
@@ -38,6 +38,6 @@ def group_specs(time_specs, kind_files):
             files = kind_files[kind],
             timespec = time_specs[kind]
         )
-        spec_list.append(PcapSpec)
+        spec_list.append(this_spec)
 
     return spec_list
