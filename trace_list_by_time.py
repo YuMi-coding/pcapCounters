@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Get the trace list by checking their start/ending times
 
-import dpkt # We use dpkt for stateless processing
 import argparse
-from datetime import datetime
 from multiprocessing import Pool, Queue, cpu_count
 
-TIME_SPEC_FORMAT ='%b %d %Y %I:%M%p'
+from src.helpers import insert_to_dict
+from src.trace.helpers import parse_time_spec, pcapReader, get_pcap_lists
+
 parser = argparse.ArgumentParser(description="Read a time specify file, check a series of pcap files,\
     and output their which pcap file belongs to which file.")
 parser.add_argument('-t', '--input-timefile', help='The input time specification', metavar="PATH", default="./timespec_03_11.json")
@@ -17,15 +17,9 @@ parser.add_argument('-s', '--time-offset', help='The time difference introduced 
 pcap_info_queue = Queue()
 time_offset = 0
 
-def get_pcap_lists(input_folder):
-    from os import listdir
-    from os.path import isfile, join
-    pcap_list = [join(input_folder, f) for f in listdir(input_folder) if isfile(join(input_folder, f))]
-    return pcap_list
 
 def read_a_pcap(pcap_filename):
-    cap = open(pcap_filename, 'rb')
-    pcap = dpkt.pcap.Reader(cap)
+    pcap = pcapReader(pcap_filename)
     start_time = 0xffffffff
     end_time = 0
     for ts, buf in pcap:
@@ -44,13 +38,6 @@ def read_pcaps(pcap_list):
         pcap_info[k] = v
 
     return pcap_info
-
-def insert_to_dict(dict, key, item):
-    if key in dict:
-        dict[key].append(item)
-    else:
-        dict[key] = [item]
-    return dict
 
 def matching_timeslots(times, pcaps):
     kinds_dict = {}
@@ -85,22 +72,6 @@ def write_kinds_dict(dest_filename, kinds_dict):
     with open(dest_filename, 'w') as outfile:
         json.dump(kinds_dict, outfile, indent=4)
 
-def parse_time_spec(timespec_filename):
-    import json
-    json_dict = {}
-    with open(timespec_filename, "r") as json_load:
-        json_dict = json.load(json_load)
-
-    time_spec = {}
-    for key in json_dict.keys():
-        if "start" in json_dict[key] and "end" in json_dict[key]:
-            start_time = datetime.strptime(json_dict[key]["start"], TIME_SPEC_FORMAT)
-            end_time = datetime.strptime(json_dict[key]["end"], TIME_SPEC_FORMAT)
-            time_spec[key] = {}
-            time_spec[key]["start"] = int(start_time.timestamp())
-            time_spec[key]["end"] = int(end_time.timestamp())
-
-    return time_spec
 
 if __name__ == '__main__':
     args = parser.parse_args()
