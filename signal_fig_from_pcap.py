@@ -85,6 +85,7 @@ def process_a_pcap(arguments):
     y_legend="Retransmission signals"
     )
     plotter.linePlot(alignX=True).saveFig(output_file)
+    print("Finished processing ", output_file)
 
 if __name__ == "__main__":
     args = argparser.parse_args()
