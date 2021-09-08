@@ -30,6 +30,7 @@ def get_filelist(input_filename, output_filename):
 # NOTE: Tshark does not support multithreading since it has a parsing engine
 # Checkout: https://osqa-ask.wireshark.org/questions/56433/multi-threaded-tshark/
 
+# TODO: We can further parallelize the processing of each reader, and split a single drawer
 
 # global_queues = {}
 # global_data = {}
