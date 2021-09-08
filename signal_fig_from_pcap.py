@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Reads from pcap files and calculates their signals
 import argparse
-
+import threading
+from multiprocessing import Pool, Queue, cpu_count
 from src.sharks.sharkReader import SharkReader
 from src.sharks.sharkConfig import SharkConfigFactory
 from src.plots.plotter import Plotter
@@ -18,13 +19,72 @@ def get_filelist(input_filename, output_filename):
     from os.path import isfile, join, isdir
     if isdir(input_filename):
         input_filelist = [join(input_filename, f) for f in listdir(input_filename) if isfile(join(input_filename, f))]
-        output_filelist = [ output_filename + f for f in listdir(input_filename) if isfile(join(input_file, f))]
+        output_filelist = [ output_filename + f for f in listdir(input_filename) if isfile(join(input_filename, f))]
         return zip(input_filelist, output_filelist)
     elif isfile(input_filename):
-        return (input_filename, output_filename)
+        return [(input_filename, output_filename)]
     else:
         print("Unidentified input_filename!")
         raise NotImplementedError
+
+# NOTE: Tshark does not support multithreading since it has a parsing engine
+# Checkout: https://osqa-ask.wireshark.org/questions/56433/multi-threaded-tshark/
+
+
+# global_queues = {}
+# global_data = {}
+
+# # class readerThread(threading.Thread):
+# #     def __init__(self, reader, filename, typename):
+# #         threading.Thread.__init__(self)
+# #         self.reader = reader
+# #         self.filename = filename
+# #         self.typename = typename
+
+# #     def run(self):
+# #         ts, signal = self.reader.get_ts_signal()
+# #         global_data[self.filename][self.typename] = (ts, signal)
+
+
+# # def process_a_filter(arguments):
+# #     pcapname, reader, type = arguments
+# #     ts, signal = reader.get_ts_signal()
+# #     global_data[pcapname][type] = (ts, signal)
+
+def process_a_pcap(arguments):
+    input_file, output_file = arguments
+    # global_data[input_file] = {}
+
+    malicious_reader = SharkReader(input_file, shark_filters.malicious_filter)
+    legitimate_reader = SharkReader(input_file, shark_filters.legitimate_filter)
+
+    # malicious_thread = readerThread(malicious_reader, input_file, "malicious")
+    # legitimate_thread = readerThread(legitimate_reader, input_file, "legitimate")
+
+    # threads = [malicious_thread, legitimate_thread]
+    # for t in threads:
+    #     t.start()
+    # for t in threads:
+    #     t.join()
+
+    # m_ts, m_signal = global_data[input_file]["malicious"]
+    # l_ts, l_signal = global_data[input_file]["legitimate"]
+    m_ts, m_signal = malicious_reader.get_ts_signal()
+    l_ts, l_signal = legitimate_reader.get_ts_signal()
+    plotter = Plotter(data={
+        "legitimate": {
+            "x" : l_ts,
+            "y" : l_signal,
+        },
+        "malicious":{
+            "x" : m_ts,
+            "y" : m_signal,
+        }
+    },
+    x_legend="Time(s)",
+    y_legend="Retransmission signals"
+    )
+    plotter.linePlot(alignX=True).saveFig(output_file)
 
 if __name__ == "__main__":
     args = argparser.parse_args()
@@ -42,27 +102,8 @@ if __name__ == "__main__":
             loadSpecProtocol(args.spec).getFilter(),
     }[args.spec_type]
 
-    for input_file, output_file in get_filelist(args.input, args.output):
-        malicious_reader = SharkReader(input_file, shark_filters.malicious_filter)
-        legitimate_reader = SharkReader(input_file, shark_filters.legitimate_filter)
+    print(list(get_filelist(args.input, args.output)))
 
-        m_ts, m_signal = malicious_reader.get_ts_signal()
-        l_ts, l_signal = legitimate_reader.get_ts_signal()
+    with Pool(int(cpu_count()/2 - 2)) as pool:
+        pool.map(process_a_pcap, get_filelist(args.input, args.output))
 
-        # print(len(m_ts), len(m_signal))
-        # print(len(l_ts), len(l_signal))
-
-        plotter = Plotter(data={
-                "legitimate": {
-                    "x" : l_ts,
-                    "y" : l_signal,
-                },
-                "malicious":{
-                    "x" : m_ts,
-                    "y" : m_signal,
-                }
-            },
-            x_legend="Time(s)",
-            y_legend="Retransmission signals"
-        )
-        plotter.linePlot(alignX=True).saveFig(output_file)
