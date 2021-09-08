@@ -35,3 +35,21 @@ class session_v4():
 
     def __hash__(self) -> int:
         return hash((self.srcIP, self.dstIP, self.srcPort, self.dstPort))
+
+    def __str__(self) -> str:
+        out_str = str(self.srcIP) + "_" + str(self.srcPort) + "_to_"+\
+            str(self.dstIP) + "_" + str(self.dstPort)
+        return out_str
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, session_v4):
+            return False
+        if self.srcIP != other.srcIP:
+            return False
+        if self.dstIP != other.dstIP:
+            return False
+        if self.srcPort != other.srcPort:
+            return False
+        if self.dstPort != other.dstPort:
+            return False
+        return True
