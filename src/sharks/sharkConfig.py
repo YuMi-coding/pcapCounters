@@ -60,13 +60,16 @@ class SharkConfigFactory:
 
         # Legitimate Protocol
         legitimate_str = helpers.getProtocolFilterStr(self.legitimate_proto)
-        if len(legitimate_str) > 0:
-            legitimate_filter += " && (" + legitimate_str + ")"
-
         # Malicious Protocol
         malicious_str = helpers.getProtocolFilterStr(self.malicious_proto)
+
+        # Protocols
+        if len(legitimate_str) > 0:
+            legitimate_filter += " && (" + legitimate_str + ")"
+            malicious_filter += " && !(" + legitimate_str + ")"
         if len(malicious_str) > 0:
             malicious_filter += " && (" + malicious_str + ")"
+            legitimate_filter += " && !(" + malicious_filter + ")"
 
         return SharkConfig(malicious_filter=malicious_filter,legitimate_filter=legitimate_filter)
 

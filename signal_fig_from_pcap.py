@@ -53,7 +53,7 @@ if __name__ == "__main__":
         # print(len(l_ts), len(l_signal))
 
         plotter = Plotter(data={
-                "total": {
+                "legitimate": {
                     "x" : l_ts,
                     "y" : l_signal,
                 },
