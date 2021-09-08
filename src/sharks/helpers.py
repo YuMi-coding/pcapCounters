@@ -17,13 +17,24 @@ def append_an_address(ll, addr):
         pass # Not a legal address in socket
     return ll
 
-def getFilterStr(ll):
+def getAddressFilterStr(ll):
     out = ""
     for h in ll:
         if len(out) > 0:
             out += " || " # Or'ed legitimate hosts
         out += "(" + "ip.addr=="+str(h) + ")"
     return out
+
+def getProtocolFilterStr(ll):
+    out = ""
+    for h in ll:
+        if len(out) > 0:
+            out += " || "
+        out += "(" + h + ")"
+    return out
+
+def loadProtos(config):
+    return config
 
 def loadAddresses(config):
     res = list()

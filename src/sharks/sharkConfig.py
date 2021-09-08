@@ -9,10 +9,12 @@ class SharkConfigFactory:
     def __init__(self, extra_filter):
         self.legitimate_hosts = []
         self.malicious_hosts = []
-        self.__spec_file = []
+        self.legitimate_proto = []
+        self.malicious_proto = []
+
         self.extra_filter = extra_filter
 
-    def loadSpec(self, filename):
+    def loadSpecAddresses(self, filename):
         config = helpers.read_config_files(filename)
         if "malicious" in config:
             malicious_config = config["malicious"]
@@ -20,6 +22,16 @@ class SharkConfigFactory:
         if "legitimate" in config:
             legitimate_config = config["legitimate"]
             self.legitimate_hosts.extend(helpers.loadAddresses(legitimate_config))
+        return self
+
+    def loadSpecProtocol(self, filename):
+        config = helpers.read_config_files(filename)
+        if "malicious" in config:
+            malicious_config = config['malicious']
+            self.malicious_proto.extend(helpers.loadProtos(malicious_config))
+        if "legitimate" in config:
+            legitimate_config = config['legitimate']
+            self.legitimate_proto.extend(helpers.loadProtos(legitimate_config))
         return self
 
     def loadMalicious(self, filename):
@@ -36,13 +48,23 @@ class SharkConfigFactory:
         legitimate_filter = str(self.extra_filter)
         malicious_filter = str(self.extra_filter)
 
-        # Legitimate
-        legitimate_str = helpers.getFilterStr(self.legitimate_hosts)
+        # Legitimate Address
+        legitimate_str = helpers.getAddressFilterStr(self.legitimate_hosts)
         if len(legitimate_str) > 0:
             legitimate_filter += " && (" + legitimate_str + ")"
 
-        # Malicious
-        malicious_str = helpers.getFilterStr(self.malicious_hosts)
+        # Malicious Address
+        malicious_str = helpers.getAddressFilterStr(self.malicious_hosts)
+        if len(malicious_str) > 0:
+            malicious_filter += " && (" + malicious_str + ")"
+
+        # Legitimate Protocol
+        legitimate_str = helpers.getProtocolFilterStr(self.legitimate_proto)
+        if len(legitimate_str) > 0:
+            legitimate_filter += " && (" + legitimate_str + ")"
+
+        # Malicious Protocol
+        malicious_str = helpers.getProtocolFilterStr(self.malicious_proto)
         if len(malicious_str) > 0:
             malicious_filter += " && (" + malicious_str + ")"
 

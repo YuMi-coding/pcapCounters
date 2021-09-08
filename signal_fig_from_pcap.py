@@ -10,6 +10,7 @@ argparser = argparse.ArgumentParser(description="Detects the signal(rtm/ofo) fro
     Preferablly loads the specs for legitimate/ malicious end hosts.")
 argparser.add_argument("-i", "--input", help="Input pcap file")
 argparser.add_argument("-s", "--spec", help="Specification for hosts, can include both types")
+argparser.add_argument("-t", "--spec-type", choices=["address", "protocol"], help="The kind of spec.", default="address")
 argparser.add_argument("-o", "--output", help="The output image name.", default="./default_imagename.png")
 
 def get_filelist(input_filename, output_filename):
@@ -31,8 +32,15 @@ if __name__ == "__main__":
         print("No available specs!")
         exit(0)
 
-    shark_filters = SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
-        loadSpec(args.spec).getFilter()
+    if args.spec_type not in ["address", "protocol"]:
+        raise NotImplementedError
+
+    shark_filters = {
+        "address": SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
+            loadSpecAddresses(args.spec).getFilter(),
+        "protocol": SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
+            loadSpecProtocol(args.spec).getFilter(),
+    }[args.spec_type]
 
     for input_file, output_file in get_filelist(args.input, args.output):
         malicious_reader = SharkReader(input_file, shark_filters.malicious_filter)
