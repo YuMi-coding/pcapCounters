@@ -19,7 +19,7 @@ def get_filelist(input_filename, output_filename):
     from os.path import isfile, join, isdir
     if isdir(input_filename):
         input_filelist = [join(input_filename, f) for f in listdir(input_filename) if isfile(join(input_filename, f))]
-        output_filelist = [ output_filename + f for f in listdir(input_filename) if isfile(join(input_filename, f))]
+        output_filelist = [ output_filename + f + ".png" for f in listdir(input_filename) if isfile(join(input_filename, f))]
         return zip(input_filelist, output_filelist)
     elif isfile(input_filename):
         return [(input_filename, output_filename)]
