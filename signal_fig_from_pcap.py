@@ -105,6 +105,6 @@ if __name__ == "__main__":
 
     print(list(get_filelist(args.input, args.output)))
 
-    with Pool(int(cpu_count()/2 - 2)) as pool:
+    with Pool(cpu_count() - 2) as pool:
         pool.map(process_a_pcap, get_filelist(args.input, args.output))
 
