@@ -2,8 +2,7 @@
 # This script slices a folder of pcap traces according to the specifications
 
 import argparse
-from multiprocessing import Pool, Queue, cpu_count
-from os import write
+from multiprocessing import Pool, cpu_count
 
 from src.trace.pcap_iterator import PcapTimeIterator
 from src.trace.pcap_specs import group_specs
