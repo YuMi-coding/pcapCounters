@@ -57,10 +57,10 @@ class SessionSplitter():
     def split(self):
         if len(self.sessions) <= 0:
             self.preprocess_spilt()
-        print("Finished preprocessing of ", self.pcapfile)
+        print("Finished preprocessing of ", self.pcapfile, " totally ", len(self.sessions), " sessions.")
         self.ready_temp_folder()
 
-        with Pool(cpu_count -2) as pool:
+        with Pool(cpu_count() -2) as pool:
             pool.map(self.session_to_pcap, list(self.sessions))
 
     def del_temps(self):
