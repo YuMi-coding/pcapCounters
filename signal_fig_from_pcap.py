@@ -126,5 +126,6 @@ if __name__ == "__main__":
         for input_filename, output_filename in tasks:
             splitter = SessionSplitter(input_filename)
             splitter.split()
+            exit(0)
             splitter.del_temps()
 
