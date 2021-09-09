@@ -57,6 +57,7 @@ class SessionSplitter():
     def split(self):
         if len(self.sessions) <= 0:
             self.preprocess_spilt()
+        print("Finished preprocessing of ", self.pcapfile)
         self.ready_temp_folder()
 
         with Pool(cpu_count -2) as pool:
