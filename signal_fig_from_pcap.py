@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 # Reads from pcap files and calculates their signals
 import argparse
-import threading
+
 from multiprocessing import Pool, Queue, cpu_count
+from socket import getfqdn
+
+from src.sharks.session_splitter import SessionSplitter
+
 from src.sharks.sharkReader import SharkReader
 from src.sharks.sharkConfig import SharkConfigFactory
+
 from src.plots.plotter import Plotter
+
 
 argparser = argparse.ArgumentParser(description="Detects the signal(rtm/ofo) from pcap files. \
     Preferablly loads the specs for legitimate/ malicious end hosts.")
@@ -15,6 +21,9 @@ argparser.add_argument("-t", "--spec-type", choices=["address", "protocol"], hel
 argparser.add_argument("-o", "--output", help="The output image name.", default="./default_imagename.png")
 argparser.add_argument("-p", "--deep-parallel", help="Use a fast pass to split traces into smaller session-based traces\
     and then analyze them.", default=False, action="store_true")
+# WIP
+argparser.add_argument("-f", "--per-flow", help="Use the per flow statistics",\
+    default=False, action="store_true")
 
 def get_filelist(input_filename, output_filename):
     from os import listdir
@@ -92,6 +101,7 @@ def process_a_pcap(arguments):
 
 if __name__ == "__main__":
     args = argparser.parse_args()
+
     if [args.spec] == [None]:
         print("No available specs!")
         exit(0)
@@ -106,8 +116,15 @@ if __name__ == "__main__":
             loadSpecProtocol(args.spec).getFilter(),
     }[args.spec_type]
 
-    print(list(get_filelist(args.input, args.output)))
+    tasks = list(get_filelist(args.input, args.output))
+    print("Available tasks: ", tasks)
 
-    with Pool(cpu_count() - 2) as pool:
-        pool.map(process_a_pcap, get_filelist(args.input, args.output))
+    if not args.deep_parallel: # parallel by pcap file
+        with Pool(cpu_count() - 2) as pool:
+            pool.map(process_a_pcap, tasks)
+    else: # TODO: Do deep parallel operations
+        for input_filename, output_filename in tasks:
+            splitter = SessionSplitter(input_filename)
+            splitter.split()
+            splitter.del_temps()
 

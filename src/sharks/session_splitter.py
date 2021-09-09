@@ -61,3 +61,10 @@ class SessionSplitter():
 
         with Pool(cpu_count -2) as pool:
             pool.map(self.session_to_pcap, list(self.sessions))
+
+    def del_temps(self):
+        from os import listdir
+        from os.path import isfile, join
+        file_lists = [join(self.temp_folder, f) for f in listdir(self.temp_folder) if isfile(join(self.temp_folder, f))]
+        for file in file_lists:
+            os.remove(file)
