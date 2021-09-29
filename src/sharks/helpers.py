@@ -25,6 +25,14 @@ def getAddressFilterStr(ll):
         out += "(" + "ip.addr=="+str(h) + ")"
     return out
 
+def getAddressPairFilterStr(ll):
+    out = ""
+    for h1, h2 in ll:
+        if len(out) > 0:
+            out += " || " # Or'ed legitimate hosts
+        out += "(" + "ip.addr=="+str(h1) + "&&" + "ip.addr==" + str(h2) + ")"
+    return out
+
 def getProtocolFilterStr(ll):
     out = ""
     for h in ll:
@@ -57,3 +65,17 @@ def loadAddresses(config):
             else:
                 append_an_address(res, v)
     return res
+
+def loadAddressPairs(config):
+    res = list()
+    if isinstance(config, dict):
+        key = list(config.keys())
+        for k in key:
+            if not isinstance(config[k], list):
+                value = list(config[k])
+            else:
+                value = config[k]
+            for v in value:
+                res.append((k,v))
+    return res
+

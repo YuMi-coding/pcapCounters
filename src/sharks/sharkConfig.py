@@ -11,6 +11,8 @@ class SharkConfigFactory:
         self.malicious_hosts = []
         self.legitimate_proto = []
         self.malicious_proto = []
+        self.malicious_pairs = []
+        self.legitimate_pairs = []
 
         self.extra_filter = extra_filter
 
@@ -22,6 +24,12 @@ class SharkConfigFactory:
         if "legitimate" in config:
             legitimate_config = config["legitimate"]
             self.legitimate_hosts.extend(helpers.loadAddresses(legitimate_config))
+        if "malicious_pairs" in config:
+            malicious_config_pair = config["malicious_pairs"]
+            self.malicious_pairs.extend(helpers.loadAddressPairs(malicious_config_pair))
+        if "legitimate_pairs" in config:
+            legitimate_config_pair = config["legitimate_pairs"]
+            self.legitimate_pairs.extend(helpers.loadAddressPairs(legitimate_config_pair))
         return self
 
     def loadSpecProtocol(self, filename):
@@ -57,6 +65,16 @@ class SharkConfigFactory:
         malicious_str = helpers.getAddressFilterStr(self.malicious_hosts)
         if len(malicious_str) > 0:
             malicious_filter += " && (" + malicious_str + ")"
+
+        # Malicious Address Pairs
+        malicious_str = helpers.getAddressPairFilterStr(self.malicious_pairs)
+        if len(malicious_str) > 0:
+            malicious_filter += " && (" + malicious_str + ")"
+
+        # Legitimate Address Pairs
+        legitimate_str = helpers.getAddressPairFilterStr(self.legitimate_pairs)
+        if len(legitimate_str) > 0:
+            legitimate_filter += " && (" + legitimate_str + ")"
 
         # Legitimate Protocol
         legitimate_str = helpers.getProtocolFilterStr(self.legitimate_proto)

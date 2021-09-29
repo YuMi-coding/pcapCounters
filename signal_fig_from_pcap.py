@@ -116,6 +116,9 @@ if __name__ == "__main__":
             loadSpecProtocol(args.spec).getFilter(),
     }[args.spec_type]
 
+    print("Legitimate filters=",shark_filters.legitimate_filter)
+    print("Malicious filters=",shark_filters.malicious_filter)
+
     tasks = list(get_filelist(args.input, args.output))
     print("Available tasks: ", tasks)
 
