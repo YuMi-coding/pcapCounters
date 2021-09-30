@@ -21,7 +21,9 @@ argparser.add_argument("-m", "--malicious-hosts", help="Malicious hosts list")
 argparser.add_argument("-t", "--spec-type", choices=["address", "protocol"], help="The kind of spec.", default="address")
 argparser.add_argument("-l", "--legitimate-hosts", help="Legitimat hosts list")
 argparser.add_argument("-o", "--output", help="The output image name.", default="./default_imagename.png")
-
+argparser.add_argument("-p", "--deep-parallel", help="Use a fast pass to split traces into smaller session-based traces\
+    and then analyze them.", default=False, action="store_true")
+    
 def get_filelist(input_filename, output_filename):
     from os import listdir
     from os.path import isfile, join, isdir
