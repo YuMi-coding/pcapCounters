@@ -3,8 +3,6 @@
 import argparse
 
 from multiprocessing import Pool, Queue, cpu_count
-from socket import getfqdn
-
 from src.sharks.session_splitter import SessionSplitter
 
 from src.sharks.sharkReader import SharkReader
