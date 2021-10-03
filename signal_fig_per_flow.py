@@ -13,17 +13,20 @@ from src.sharks.sharkConfig import SharkConfigFactory
 from src.plots.plotter import Plotter
 
 DEBUG = 1
+save_metadata = False
+
 argparser = argparse.ArgumentParser(description="Detects the signal(rtm/ofo) from pcap files. \
     Preferablly loads the specs for legitimate/ malicious end hosts.")
 argparser.add_argument("-i", "--input", help="Input pcap file")
 argparser.add_argument("-s", "--spec", help="Specification for hosts, can include both types")
-argparser.add_argument("-m", "--malicious-hosts", help="Malicious hosts list")
 argparser.add_argument("-t", "--spec-type", choices=["address", "protocol"], help="The kind of spec.", default="address")
-argparser.add_argument("-l", "--legitimate-hosts", help="Legitimat hosts list")
 argparser.add_argument("-o", "--output", help="The output image name.", default="./default_imagename.png")
-argparser.add_argument("-p", "--deep-parallel", help="Use a fast pass to split traces into smaller session-based traces\
-    and then analyze them.", default=False, action="store_true")
-    
+argparser.add_argument("-m", "--metadata-output", help="output the metadata of the figure", default=False, action="store_true")
+# argparser.add_argument("-l", "--legitimate-hosts", help="Legitimat hosts list")
+# argparser.add_argument("-m", "--malicious-hosts", help="Malicious hosts list")
+# argparser.add_argument("-p", "--deep-parallel", help="Use a fast pass to split traces into smaller session-based traces\
+#     and then analyze them.", default=False, action="store_true")
+
 def get_filelist(input_filename, output_filename):
     from os import listdir
     from os.path import isfile, join, isdir
@@ -72,17 +75,22 @@ def process_a_pcap(arguments):
         y_legend="Retransmission signals per Flow"
     )
     plotter.linePlot(alignX=True).saveFig(output_file)
+    if save_metadata:
+        plotter.saveMeta(output_file)
     print("Finished processing ", output_file)
 
 
 if __name__ == "__main__":
     args = argparser.parse_args()
-    if [args.spec, args.malicious_hosts, args.legitimate_hosts] == [None, None, None]:
+    if [args.spec] == [None, None, None]:
         print("No available specs!")
         exit(0)
 
     if args.spec_type not in ["address", "protocol"]:
         raise NotImplementedError
+    
+    if args.metadata_output:
+        save_metadata = True
 
     signal_filters = {
         "address"   :   SharkConfigFactory("(tcp.analysis.retransmission || tcp.analysis.out_of_order)").\
@@ -104,12 +112,6 @@ if __name__ == "__main__":
     tasks = list(get_filelist(args.input, args.output))
     print("Available tasks: ", tasks)
 
-    if not args.deep_parallel: # parallel by pcap file
-        with Pool(cpu_count() - 2) as pool:
-            pool.map(process_a_pcap, tasks)
-    else: # TODO: Do deep parallel operations
-        for input_filename, output_filename in tasks:
-            splitter = SessionSplitter(input_filename)
-            splitter.split()
-            exit(0)
-            splitter.del_temps()
+    # We are not doing deep parallel for now.
+    with Pool(int(cpu_count() / 2)) as pool:
+        pool.map(process_a_pcap, tasks)
