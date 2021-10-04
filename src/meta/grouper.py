@@ -23,11 +23,13 @@ class MetaGrouper():
     # This function returns all the value in data as list of tuple,
     # and the first tuple is the header of csv
     def get_value_lists(self):
-        result = [tuple(self.kind_list)] 
+        header = ["timestamp"]
+        header.extend(self.kindlist)
+        result = [tuple(header)] 
         data_keys = list(self.data.keys())
         data_keys = sorted(data_keys)
         for data_key in data_keys:
-            temp_tuple = []
+            temp_tuple = [data_key]
             for kind in self.kind_list:
                 if kind not in self.data[data_key]:
                     temp_tuple.append(0)
