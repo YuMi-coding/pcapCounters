@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# Reads from pcap files and calculates their signals, generates the signals and calculates per flow singals
+# This script reads pcap files using pyshark and output their signals and flow counts
+# according to given specification
 
 import argparse
 import nest_asyncio
@@ -9,12 +10,9 @@ nest_asyncio.apply()
 # __import__('IPython').embed()
 
 from multiprocessing import Pool, cpu_count
-from src.sharks.session_splitter import SessionSplitter
 from src.meta.grouper import MetaGrouper
-from src.data.align import Align
 from src.sharks.sharkReader import SharkReader
 from src.sharks.sharkConfig import SharkConfigFactory
-from src.plots.plotter import Plotter
 
 DEBUG = 1
 save_metadata = False
@@ -32,7 +30,7 @@ def get_filelist(input_filename, output_filename):
     from os.path import isfile, join, isdir
     if isdir(input_filename):
         input_filelist = [join(input_filename, f) for f in listdir(input_filename) if isfile(join(input_filename, f))]
-        output_filelist = [ output_filename + f + ".png" for f in listdir(input_filename) if isfile(join(input_filename, f))]
+        output_filelist = [ output_filename + f + ".meta" for f in listdir(input_filename) if isfile(join(input_filename, f))]
         return zip(input_filelist, output_filelist)
     elif isfile(input_filename):
         return [(input_filename, output_filename)]

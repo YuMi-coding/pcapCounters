@@ -29,7 +29,10 @@ class MetaGrouper():
         for data_key in data_keys:
             temp_tuple = []
             for kind in self.kind_list:
-                temp_tuple.append(self.data[data_key][kind])
+                if kind not in self.data[data_key]:
+                    temp_tuple.append(0)
+                else:
+                    temp_tuple.append(self.data[data_key][kind])
             result.append(tuple(temp_tuple))
         return result
 
