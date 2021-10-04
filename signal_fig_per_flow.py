@@ -3,8 +3,10 @@
 
 import argparse
 import nest_asyncio
+# Monkey patches for fix the re-entering of asyncio problem
 nest_asyncio.apply()
-__import__('IPython').embed()
+
+# __import__('IPython').embed()
 
 from multiprocessing import Pool, cpu_count
 from src.sharks.session_splitter import SessionSplitter
