@@ -52,7 +52,7 @@ class Merger():
         data_keys = sorted(data_keys)
         for data_key in data_keys:
             temp_tuple = [data_key]
-            for kind in range(1, len(kind_list)):
+            for kind in range(1, len(kind_list)+1):
                 if kind not in self.data[data_key]:
                     temp_tuple.append(0)
                 else:
