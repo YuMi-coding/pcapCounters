@@ -7,11 +7,7 @@ import nest_asyncio
 # Monkey patches for fix the re-entering of asyncio problem
 nest_asyncio.apply()
 
-from multiprocessing import Pool, cpu_count
 from src.meta.merge import Merger
-from src.meta.grouper import MetaGrouper
-from src.sharks.sharkReader import SharkReader
-from src.sharks.sharkConfig import SharkConfigFactory
 
 DEBUG = 1
 save_metadata = False
@@ -26,7 +22,7 @@ def get_filelist(input_filename, output_filename):
     output_file = output_filename + ".csv"
     if isdir(input_filename):
         input_filelist = [join(input_filename, f) for f in listdir(input_filename) \
-            if isfile(join(input_filename, f) and f.endswith('.meta.csv'))]
+            if isfile(join(input_filename, f)) and f.endswith('.meta.csv')]
         return input_filelist, output_file
     elif isfile(input_filename):
         return input_filename, output_file
