@@ -2,12 +2,14 @@
 # Reads from pcap files and calculates their signals, generates the signals and calculates per flow singals
 
 import argparse
+import nest_asyncio
+nest_asyncio.apply()
+__import__('IPython').embed()
 
 from multiprocessing import Pool, cpu_count
 from src.sharks.session_splitter import SessionSplitter
 
 from src.data.align import Align
-
 from src.sharks.sharkReader import SharkReader
 from src.sharks.sharkConfig import SharkConfigFactory
 from src.plots.plotter import Plotter
