@@ -36,7 +36,7 @@ def process_filelist(filelist)->Merger:
     total_files = len(filelist)
     for i,filename in enumerate(filelist):
         merger.add_a_metafile(filename)
-        print("Progress: ", i, "/", str(total_files), "r")
+        print("Progress: ", i+1, "/", str(total_files), "\r")
     return merger
 
 if __name__ == "__main__":

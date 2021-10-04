@@ -17,7 +17,7 @@ class Merger():
     def add_a_metafile(self, meta_filename):
         input_meta = []
         with open(meta_filename, 'r', newline="") as csvfile:
-            reader = csv.reader(csvfile, delimiter= " ")
+            reader = csv.reader(csvfile)
             for row in reader:
                 input_meta.append(row)
         self.add_a_meta(input_meta)
