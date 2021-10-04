@@ -38,7 +38,7 @@ class Merger():
                 continue
             for j, meta in enumerate(meta_data):
                 if j == 0:
-                    key = int(meta)
+                    key = int(float(meta))
                 else:
                     insert_dict_with_kind(self.data, key, j, meta)
             del key
