@@ -5,7 +5,7 @@ import collections
 def insert_dict_with_kind(dict_obj, key, kind, value):
     if key not in dict_obj:
         dict_obj[key] = {kind: 0}
-    dict_obj[key][kind] += value
+    dict_obj[key][kind] += int(value)
     return dict_obj
 
 class Merger():
