@@ -24,7 +24,7 @@ class MetaGrouper():
     # and the first tuple is the header of csv
     def get_value_lists(self):
         header = ["timestamp"]
-        header.extend(self.kindlist)
+        header.extend(self.kind_list)
         result = [tuple(header)] 
         data_keys = list(self.data.keys())
         data_keys = sorted(data_keys)
