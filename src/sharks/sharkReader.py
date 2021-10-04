@@ -13,6 +13,30 @@ class SharkReader():
     def refreshCapture(self):
         self.capture = pyshark.FileCapture(self.pcap_file, display_filter=self.filter_str)
 
+    # The absolute timestamp output
+    def get_abs_ts_signal(self):
+        try:
+            min_ts = float(self.capture[0].frame_info.time_epoch)
+        except KeyError:
+            return [], []
+        ts = [min_ts]
+        signal = [0]
+
+        max_grain = 0
+        for pkt in self.capture:
+            real_ts = float(pkt.frame_info.time_epoch)
+            relative_ts = real_ts - min_ts
+
+            current_grain = int(relative_ts / self.time_grain)
+            if current_grain > max_grain:
+                max_grain = current_grain
+                ts.append(real_ts)
+                signal.append(1)
+            else:
+                signal[-1] += 1
+
+        return ts, signal
+
     def get_ts_signal(self):
         try:
             min_ts = float(self.capture[0].frame_info.time_epoch)
