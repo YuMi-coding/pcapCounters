@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # This script plots the figure from a meta csv file
-import time
-from datetime import datetime
 import argparse
+import copy
 from src.meta.merge import Merger
 from src.plots.plotter import Plotter
 
@@ -29,7 +28,7 @@ def process_per_flow(input_data: Merger, output_filename):
         return op1/op2
     no_group = int(len(label)/2)
 
-    series_name = ["Malicious signal per flow", "Total signal per flow"]
+    series_name = ["Malicious", "Total"]
     series_data = []
     for i in range(no_group):
         id1 = {0:1,1:2}[i]
@@ -42,16 +41,18 @@ def process_per_flow(input_data: Merger, output_filename):
     plot_data = {}
     for i, name in enumerate(series_name):
         plot_data[name] = {}
-        plot_data[name]['x'] = data[0]
+        plot_data[name]['x'] = copy.copy(data[0])
         plot_data[name]['y'] = series_data[i]
 
     plotter = Plotter(
         data = plot_data,
-        x_legend= "Timestamp",
-        y_legend= "Signal per flow"
+        x_legend= "Time",
+        y_legend= "# of signals per flow"
     )
-    plotter.linePlot(mva=20)
-    plotter.saveFig(output_filename+".png")
+    plotter.linePlot(alignX=True, mva=20)
+    plotter.addGrayBox_X(448,1315)
+    plotter.saveFig(output_filename + ".png")
+    plotter.saveEps(output_filename + '.eps')
 
 
 if __name__ == "__main__":

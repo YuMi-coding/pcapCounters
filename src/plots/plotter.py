@@ -11,9 +11,18 @@ class Plotter():
         self.data = data
         self.x_legend = x_legend
         self.y_legend = y_legend
+        plt.clf()
 
     def saveFig(self, filename):
         plt.savefig(filename)
+        return self
+
+    def saveEps(self, filename):
+        plt.savefig(filename, format='eps',dpi=300)
+        return self
+
+    def saveSvg(self, filename):
+        plt.savefig(filename, format='svg',dpi=300)
         return self
 
     def saveMeta(self, filename):
@@ -56,16 +65,22 @@ class Plotter():
 
         return self
 
+    def addGrayBox_X(self, start_x, end_x, color='gray'):
+        max_Y = helpers.get_max_Y(self.data)
+
+        plt.fill_betweenx([0, max_Y],[start_x], [end_x], facecolor=color, alpha=0.5)
+
+
     def linePlot(self, data=None, alignX=False, mva = 0):
         if data is not None:
             self.data = data
         if alignX and len(self.data) > 0:
             self.data = helpers.alignX(self.data)
 
-        plt.clf()
         for series in self.data:
             series_data = self.data[series]
-            plt.plot(series_data["x"], helpers.moving_average(series_data["y"], mva), label=series)
+            series_data["y"] = helpers.moving_average(series_data["y"], mva)
+            plt.plot(series_data["x"], series_data["y"], label=series)
 
         plt.legend(loc="best")
         plt.xlabel(self.x_legend)
