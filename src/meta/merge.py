@@ -60,6 +60,24 @@ class Merger():
             result.append(tuple(temp_tuple))
         return result
 
+    def get_series_data(self):
+        key_kind = self.header[0]
+        data_kind = self.header[1:]
+        data_keys = list(self.data.keys())
+
+        data_dict = {}
+        for kind in data_kind:
+            data_dict[kind] = []
+
+        for data_key in data_keys:
+            for i, kind in enumerate(data_kind):
+                data_dict[kind].append(self.data[data_key][i+1])
+
+        result = [data_keys]
+        for kind in data_kind:
+            result.append(data_dict[kind])
+        return result, self.header
+
     def saveMeta(self, filename):
         data = self.get_value_lists()
         csv_filename = filename + ".csv"

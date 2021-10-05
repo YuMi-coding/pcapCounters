@@ -56,7 +56,7 @@ class Plotter():
 
         return self
 
-    def linePlot(self, data=None, alignX=False):
+    def linePlot(self, data=None, alignX=False, mva = 0):
         if data is not None:
             self.data = data
         if alignX and len(self.data) > 0:
@@ -65,7 +65,7 @@ class Plotter():
         plt.clf()
         for series in self.data:
             series_data = self.data[series]
-            plt.plot(series_data["x"], series_data["y"], label=series)
+            plt.plot(series_data["x"], helpers.moving_average(series_data["y"], mva), label=series)
 
         plt.legend(loc="best")
         plt.xlabel(self.x_legend)
