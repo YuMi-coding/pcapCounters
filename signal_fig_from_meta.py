@@ -49,8 +49,10 @@ def process_per_flow(input_data: Merger, output_filename):
         x_legend= "Time",
         y_legend= "# of signals per flow"
     )
-    plotter.linePlot(alignX=True, mva=20)
-    plotter.addGrayBox_X(448,1315)
+    plotter.linePlot(alignX=True, mva=240)
+    # plotter.addGrayBox_X(4380,5520) # IDS2018-LOIC-UDP
+    plotter.addGrayBox_X(500, 4397) # IDS2018-LOIC-HTTP
+    # plotter.addGrayBox_X(448, 1315) # DNS-DDoS-Amp
     plotter.saveFig(output_filename + ".png")
     plotter.saveEps(output_filename + '.eps')
 
