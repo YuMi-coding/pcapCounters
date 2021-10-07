@@ -13,16 +13,23 @@ class Plotter():
         self.y_legend = y_legend
         plt.clf()
 
+    def set_matplotlib_param(self, group, args):
+        matplotlib.rc(group, **args)
+
     def saveFig(self, filename):
-        plt.savefig(filename)
+        plt.tight_layout()
+        plt.savefig(filename, bbox_inches="tight")
         return self
 
     def saveEps(self, filename):
-        plt.savefig(filename, format='eps',dpi=300)
+        # plt.set_rasterized(True)
+        plt.tight_layout()
+        plt.savefig(filename, format='eps',dpi=300, bbox_inches="tight")
         return self
 
     def saveSvg(self, filename):
-        plt.savefig(filename, format='svg',dpi=300)
+        plt.tight_layout()
+        plt.savefig(filename, format='svg',dpi=300, bbox_inches="tight")
         return self
 
     def saveMeta(self, filename):
@@ -65,10 +72,10 @@ class Plotter():
 
         return self
 
-    def addGrayBox_X(self, start_x, end_x, color='gray'):
+    def addGrayBox_X(self, start_x, end_x, color='lightgray'):
         max_Y = helpers.get_max_Y(self.data)
 
-        plt.fill_betweenx([0, max_Y],[start_x], [end_x], facecolor=color, alpha=0.5)
+        plt.fill_betweenx([0, max_Y],[start_x], [end_x], facecolor=color)
 
 
     def linePlot(self, data=None, alignX=False, mva = 0):
@@ -83,7 +90,7 @@ class Plotter():
             plt.plot(series_data["x"], series_data["y"], label=series)
 
         plt.legend(loc="best")
-        plt.xlabel(self.x_legend)
-        plt.ylabel(self.y_legend)
+        plt.xlabel(self.x_legend, fontsize=16)
+        plt.ylabel(self.y_legend, fontsize=16)
 
         return self
